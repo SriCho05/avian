@@ -15,6 +15,13 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
+// Firebase imports
+import { auth, db, storage } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
+
+
 const formSchema = z.object({
   fullName: z.string().min(3, "Full name must be at least 3 characters"),
   phone: z.string().min(10, "Please enter a valid phone number"),
@@ -23,14 +30,14 @@ const formSchema = z.object({
   confirmPassword: z.string(),
   location: z.string().min(2, "Please enter a location"),
   licenseNumber: z.string().min(5, "Please enter a valid license number"),
-  certification: z.instanceof(File, { message: "Certification document is required." }),
+  certification: z.instanceof(File, { message: "Certification document is required." }).refine(file => file.size > 0, "Certification document is required."),
   experience: z.string().min(1, "Please select years of experience"),
   expertise: z.array(z.string()).min(1, "Select at least one area of expertise"),
   languages: z.array(z.string()).min(1, "Select at least one language"),
   droneType: z.string().min(1, "Please select a drone type"),
   modelAndSpecs: z.string().min(10, "Please provide model and specs"),
   payloadCapabilities: z.string().min(5, "Please provide payload capabilities"),
-  insurance: z.instanceof(File, { message: "Insurance document is required." }),
+  insurance: z.instanceof(File, { message: "Insurance document is required." }).refine(file => file.size > 0, "Insurance document is required."),
   serviceRadius: z.number().min(1),
   willingToTravel: z.boolean(),
   availability: z.array(z.string()).min(1, "Please select your availability"),
@@ -90,23 +97,44 @@ export function RegistrationForm() {
     }
   };
   
+  const uploadFile = async (file: File, path: string): Promise<string> => {
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    return getDownloadURL(storageRef);
+  };
+  
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      console.log("Form submitted with data (simulation):", data);
+      // 1. Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
+      // 2. Upload files to Firebase Storage
+      const certificationUrl = await uploadFile(data.certification, `pilots/${user.uid}/certification-${data.certification.name}`);
+      const insuranceUrl = await uploadFile(data.insurance, `pilots/${user.uid}/insurance-${data.insurance.name}`);
+
+      // 3. Save pilot data to Firestore
+      const { password, confirmPassword, certification, insurance, ...pilotData } = data;
       
-      // Simulate a network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirect to confirmation page without Firebase interaction
+      await setDoc(doc(db, "pilots", user.uid), {
+        ...pilotData,
+        uid: user.uid,
+        certificationUrl,
+        insuranceUrl,
+        createdAt: new Date(),
+        profileStatus: 'under-review',
+      });
+
+      // 4. Redirect to confirmation page
       router.push("/confirmation");
 
     } catch (error: any) {
-      console.error("Simulation failed:", error);
+      console.error("Registration failed:", error);
       toast({
         variant: "destructive",
-        title: "Simulation Failed",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Registration Failed",
+        description: error.message || "An unexpected error occurred. Please try again.",
       });
       setIsSubmitting(false);
     }
