@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, FormProvider, FieldName } from "react-hook-form";
+import { useForm, FormProvider, FieldName, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -72,12 +72,14 @@ export function RegistrationForm() {
       confirmPassword: "",
       location: "",
       licenseNumber: "",
+      certification: undefined,
       experience: "",
       expertise: [],
       languages: [],
       droneType: "",
       modelAndSpecs: "",
       payloadCapabilities: "",
+      insurance: undefined,
       willingToTravel: false,
       serviceRadius: 50,
       availability: [],
@@ -101,6 +103,15 @@ export function RegistrationForm() {
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file);
     return getDownloadURL(storageRef);
+  };
+
+  const onInvalid = (errors: FieldErrors) => {
+    console.error(errors);
+    toast({
+      variant: "destructive",
+      title: "Incomplete Form",
+      description: "Please fill out all required fields on every step and try again.",
+    });
   };
   
   const processForm = async (data: FormData) => {
@@ -158,7 +169,7 @@ export function RegistrationForm() {
           <Progress value={progress} className="mt-4" />
         </CardHeader>
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(processForm)}>
+          <form onSubmit={handleSubmit(processForm, onInvalid)}>
             <CardContent>
               {currentStep === 0 && <Step1PersonalDetails />}
               {currentStep === 1 && <Step2PilotDetails />}
