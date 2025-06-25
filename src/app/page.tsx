@@ -15,7 +15,7 @@ export default function Home() {
           </Link>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="#">Log In</Link>
+              <Link href="/login">Log In</Link>
             </Button>
             <Button asChild style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}>
               <Link href="/register">Register Now</Link>

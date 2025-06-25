@@ -1,5 +1,6 @@
-import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
+import { google } from 'googleapis';
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,7 +22,13 @@ export async function POST(req: NextRequest) {
     });
 
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-    const range = 'A1'; // Start from the first cell
+    const range = 'A1';
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    const { password, confirmPassword, ...dataToWrite } = body;
+    dataToWrite.password = hashedPassword;
+
 
     // Check if the sheet has headers
     const getRows = await sheets.spreadsheets.values.get({
@@ -29,7 +36,7 @@ export async function POST(req: NextRequest) {
       range: 'A1:Z1',
     });
 
-    const headers = Object.keys(body);
+    const headers = Object.keys(dataToWrite);
     let needsHeader = !getRows.data.values || getRows.data.values.length === 0;
 
     if (needsHeader) {
@@ -45,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     const values = headers.map(header => {
-      const value = body[header];
+      const value = dataToWrite[header];
       if (Array.isArray(value)) {
         return value.join(', ');
       }
