@@ -5,12 +5,37 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Country, State, City } from "country-state-city";
+import type { ICountry, IState, ICity } from "country-state-city";
 
 export function Step1PersonalDetails() {
-  const { control } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [countries, setCountries] = useState<ICountry[]>([]);
+  const [states, setStates] = useState<IState[]>([]);
+  const [cities, setCities] = useState<ICity[]>([]);
+
+  const countryCode = watch("country");
+  const stateCode = watch("state");
+
+  useEffect(() => {
+    setCountries(Country.getAllCountries());
+  }, []);
+
+  useEffect(() => {
+    const statesOfCountry = countryCode ? State.getStatesOfCountry(countryCode) : [];
+    setStates(statesOfCountry || []);
+  }, [countryCode]);
+
+  useEffect(() => {
+    const citiesOfState = countryCode && stateCode ? City.getCitiesOfState(countryCode, stateCode) : [];
+    setCities(citiesOfState || []);
+  }, [countryCode, stateCode]);
+
 
   return (
     <div className="space-y-4">
@@ -93,19 +118,99 @@ export function Step1PersonalDetails() {
           )}
         />
       </div>
-      <FormField
-        control={control}
-        name="location"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Location</FormLabel>
-            <FormControl>
-              <Input placeholder="City, State, Country" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FormField
+          control={control}
+          name="country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Country</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  setValue("state", "");
+                  setValue("city", "");
+                }}
+                value={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a country" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {countries.map((country) => (
+                    <SelectItem key={country.isoCode} value={country.isoCode}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="state"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>State/Province</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  setValue("city", "");
+                }}
+                value={field.value}
+                disabled={!countryCode || states.length === 0}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={states.length === 0 ? "No states available" : "Select a state"} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {states.map((state) => (
+                    <SelectItem key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>City</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                disabled={!stateCode || cities.length === 0}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={cities.length === 0 ? "No cities available" : "Select a city"} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city.name} value={city.name}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }

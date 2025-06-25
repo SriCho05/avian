@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { Country, State } from "country-state-city";
 
 const formSchema = z.object({
   fullName: z.string().min(3, "Full name must be at least 3 characters"),
@@ -21,7 +22,9 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
-  location: z.string().min(2, "Please enter a location"),
+  country: z.string().min(1, "Please select a country"),
+  state: z.string().optional(),
+  city: z.string().optional(),
   licenseNumber: z.string().min(5, "Please enter a valid license number"),
   certification: z.instanceof(File, { message: "Certification document is required." }).refine(file => file.size > 0, "Certification document is required."),
   experience: z.string().min(1, "Please select years of experience"),
@@ -42,7 +45,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const steps = [
-  { id: 1, name: 'Personal Details', fields: ['fullName', 'phone', 'email', 'password', 'confirmPassword', 'location'] },
+  { id: 1, name: 'Personal Details', fields: ['fullName', 'phone', 'email', 'password', 'confirmPassword', 'country', 'state', 'city'] },
   { id: 2, name: 'Pilot Details', fields: ['licenseNumber', 'certification', 'experience', 'expertise', 'languages'] },
   { id: 3, name: 'Drone Equipment', fields: ['droneType', 'droneModel', 'payloadCapabilities', 'insurance'] },
   { id: 4, name: 'Availability & Review', fields: ['serviceRadius', 'willingToTravel', 'availability'] },
@@ -63,7 +66,9 @@ export function RegistrationForm() {
       email: "",
       password: "",
       confirmPassword: "",
-      location: "",
+      country: "",
+      state: "",
+      city: "",
       licenseNumber: "",
       certification: undefined,
       experience: "",
@@ -120,11 +125,15 @@ export function RegistrationForm() {
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
     
-    // We can't save files directly, so we'll just save their names.
     const { password, confirmPassword, certification, insurance, ...formDataForSheet } = data;
+
+    const countryName = formDataForSheet.country ? Country.getCountryByCode(formDataForSheet.country)?.name : '';
+    const stateName = formDataForSheet.country && formDataForSheet.state ? State.getStateByCodeAndCountry(formDataForSheet.state, formDataForSheet.country)?.name : '';
 
     const pilotData = {
       ...formDataForSheet,
+      country: countryName || formDataForSheet.country,
+      state: stateName || formDataForSheet.state,
       certificationFile: certification.name,
       insuranceFile: insurance.name,
       submittedAt: new Date().toISOString(),
@@ -144,7 +153,6 @@ export function RegistrationForm() {
         throw new Error(errorData.message || 'Something went wrong');
       }
 
-      // Redirect to confirmation page on success
       router.push("/confirmation");
 
     } catch (error: any) {
