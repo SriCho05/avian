@@ -44,7 +44,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const values = headers.map(header => body[header] || "");
+    const values = headers.map(header => {
+      const value = body[header];
+      if (Array.isArray(value)) {
+        return value.join(', ');
+      }
+      return value || "";
+    });
 
     // Append the new row of data
     const response = await sheets.spreadsheets.values.append({
