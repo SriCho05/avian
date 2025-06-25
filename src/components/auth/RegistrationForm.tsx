@@ -12,10 +12,6 @@ import { Step4Availability } from "@/components/auth/Step4Availability";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { auth, db, storage } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -97,35 +93,20 @@ export function RegistrationForm() {
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const user = userCredential.user;
-
-      const certificationRef = ref(storage, `certifications/${user.uid}/${data.certification.name}`);
-      await uploadBytes(certificationRef, data.certification);
-      const certificationUrl = await getDownloadURL(certificationRef);
-
-      const insuranceRef = ref(storage, `insurance/${user.uid}/${data.insurance.name}`);
-      await uploadBytes(insuranceRef, data.insurance);
-      const insuranceUrl = await getDownloadURL(insuranceRef);
+      console.log("Form submitted with data (simulation):", data);
       
-      const { password, confirmPassword, ...pilotData } = data;
+      // Simulate a network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      await setDoc(doc(db, "pilots", user.uid), {
-        ...pilotData,
-        uid: user.uid,
-        certificationUrl,
-        insuranceUrl,
-        profileStatus: 'review'
-      });
-
+      // Redirect to confirmation page without Firebase interaction
       router.push("/confirmation");
 
     } catch (error: any) {
-      console.error("Registration failed:", error);
+      console.error("Simulation failed:", error);
       toast({
         variant: "destructive",
-        title: "Registration Failed",
-        description: error.message?.replace('Firebase: ', '') || "An unexpected error occurred. Please try again.",
+        title: "Simulation Failed",
+        description: "An unexpected error occurred. Please try again.",
       });
       setIsSubmitting(false);
     }
