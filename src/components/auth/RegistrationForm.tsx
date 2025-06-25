@@ -5,7 +5,6 @@ import { useForm, FormProvider, FieldName, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import * as XLSX from "xlsx";
 import { Step1PersonalDetails } from "@/components/auth/Step1PersonalDetails";
 import { Step2PilotDetails } from "@/components/auth/Step2PilotDetails";
 import { Step3DroneEquipment } from "@/components/auth/Step3DroneEquipment";
@@ -121,33 +120,39 @@ export function RegistrationForm() {
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
     
-    // We can't save files in Excel, so we'll just save their names.
-    const { password, confirmPassword, certification, insurance, ...formDataForExcel } = data;
+    // We can't save files directly, so we'll just save their names.
+    const { password, confirmPassword, certification, insurance, ...formDataForSheet } = data;
 
     const pilotData = {
-      ...formDataForExcel,
+      ...formDataForSheet,
       certificationFile: certification.name,
       insuranceFile: insurance.name,
       submittedAt: new Date().toISOString(),
     };
 
     try {
-        const worksheet = XLSX.utils.json_to_sheet([pilotData]);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Pilots");
-    
-        // This will trigger a download of the file
-        XLSX.writeFile(workbook, "PilotRegistrations.xlsx");
-    
-        // Redirect to confirmation page
-        router.push("/confirmation");
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(pilotData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Something went wrong');
+      }
+
+      // Redirect to confirmation page on success
+      router.push("/confirmation");
 
     } catch (error: any) {
-        console.error("Failed to generate Excel file:", error);
+        console.error("Failed to submit to Google Sheet:", error);
         toast({
             variant: "destructive",
             title: "Submission Failed",
-            description: "Could not generate the registration file. Please try again.",
+            description: error.message || "Could not save the registration data. Please try again.",
         });
         setIsSubmitting(false);
     }
