@@ -28,7 +28,7 @@ const formSchema = z.object({
   expertise: z.array(z.string()).min(1, "Select at least one area of expertise"),
   languages: z.array(z.string()).min(1, "Select at least one language"),
   droneType: z.string().min(1, "Please select a drone type"),
-  modelAndSpecs: z.string().min(10, "Please provide model and specs"),
+  droneModel: z.string().min(1, "Please select a drone model"),
   payloadCapabilities: z.string().min(5, "Please provide payload capabilities"),
   insurance: z.instanceof(File, { message: "Insurance document is required." }).refine(file => file.size > 0, "Insurance document is required."),
   serviceRadius: z.number().min(1),
@@ -44,7 +44,7 @@ type FormData = z.infer<typeof formSchema>;
 const steps = [
   { id: 1, name: 'Personal Details', fields: ['fullName', 'phone', 'email', 'password', 'confirmPassword', 'location'] },
   { id: 2, name: 'Pilot Details', fields: ['licenseNumber', 'certification', 'experience', 'expertise', 'languages'] },
-  { id: 3, name: 'Drone Equipment', fields: ['droneType', 'modelAndSpecs', 'payloadCapabilities', 'insurance'] },
+  { id: 3, name: 'Drone Equipment', fields: ['droneType', 'droneModel', 'payloadCapabilities', 'insurance'] },
   { id: 4, name: 'Availability & Review', fields: ['serviceRadius', 'willingToTravel', 'availability'] },
 ];
 
@@ -70,7 +70,7 @@ export function RegistrationForm() {
       expertise: [],
       languages: [],
       droneType: "",
-      modelAndSpecs: "",
+      droneModel: "",
       payloadCapabilities: "",
       insurance: undefined,
       willingToTravel: false,
