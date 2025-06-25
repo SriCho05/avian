@@ -29,7 +29,7 @@ const formSchema = z.object({
   languages: z.array(z.string()).min(1, "Select at least one language"),
   droneType: z.string().min(1, "Please select a drone type"),
   droneModel: z.string().min(1, "Please select a drone model"),
-  payloadCapabilities: z.string().min(5, "Please provide payload capabilities"),
+  payloadCapabilities: z.string().optional(),
   insurance: z.instanceof(File, { message: "Insurance document is required." }).refine(file => file.size > 0, "Insurance document is required."),
   serviceRadius: z.number().min(1),
   willingToTravel: z.boolean(),
