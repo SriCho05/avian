@@ -125,15 +125,15 @@ export function RegistrationForm() {
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
     
-    const { password, confirmPassword, certification, insurance, ...formDataForSheet } = data;
+    const { confirmPassword, certification, insurance, ...dataForApi } = data;
 
-    const countryName = formDataForSheet.country ? Country.getCountryByCode(formDataForSheet.country)?.name : '';
-    const stateName = formDataForSheet.country && formDataForSheet.state ? State.getStateByCodeAndCountry(formDataForSheet.state, formDataForSheet.country)?.name : '';
+    const countryName = dataForApi.country ? Country.getCountryByCode(dataForApi.country)?.name : '';
+    const stateName = dataForApi.country && dataForApi.state ? State.getStateByCodeAndCountry(dataForApi.state, dataForApi.country)?.name : '';
 
     const pilotData = {
-      ...formDataForSheet,
-      country: countryName || formDataForSheet.country,
-      state: stateName || formDataForSheet.state,
+      ...dataForApi,
+      country: countryName || dataForApi.country,
+      state: stateName || dataForApi.state,
       certificationFile: certification.name,
       insuranceFile: insurance.name,
       submittedAt: new Date().toISOString(),
