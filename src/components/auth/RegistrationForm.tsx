@@ -5,6 +5,7 @@ import { useForm, FormProvider, FieldName, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import * as XLSX from "xlsx";
 import { Step1PersonalDetails } from "@/components/auth/Step1PersonalDetails";
 import { Step2PilotDetails } from "@/components/auth/Step2PilotDetails";
 import { Step3DroneEquipment } from "@/components/auth/Step3DroneEquipment";
@@ -14,13 +15,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-
-// Firebase imports
-import { auth, db, storage } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, setDoc } from "firebase/firestore";
-
 
 const formSchema = z.object({
   fullName: z.string().min(3, "Full name must be at least 3 characters"),
@@ -98,12 +92,6 @@ export function RegistrationForm() {
       setCurrentStep(step => step + 1);
     }
   };
-  
-  const uploadFile = async (file: File, path: string): Promise<string> => {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
-  };
 
   const onInvalid = (errors: FieldErrors) => {
     console.error("Form validation failed:", errors);
@@ -132,38 +120,36 @@ export function RegistrationForm() {
   
   const processForm = async (data: FormData) => {
     setIsSubmitting(true);
+    
+    // We can't save files in Excel, so we'll just save their names.
+    const { password, confirmPassword, certification, insurance, ...formDataForExcel } = data;
+
+    const pilotData = {
+      ...formDataForExcel,
+      certificationFile: certification.name,
+      insuranceFile: insurance.name,
+      submittedAt: new Date().toISOString(),
+    };
+
     try {
-      // 1. Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const user = userCredential.user;
-
-      // 2. Upload files to Firebase Storage
-      const certificationUrl = await uploadFile(data.certification, `pilots/${user.uid}/certification-${data.certification.name}`);
-      const insuranceUrl = await uploadFile(data.insurance, `pilots/${user.uid}/insurance-${data.insurance.name}`);
-
-      // 3. Save pilot data to Firestore
-      const { password, confirmPassword, certification, insurance, ...pilotData } = data;
-      
-      await setDoc(doc(db, "pilots", user.uid), {
-        ...pilotData,
-        uid: user.uid,
-        certificationUrl,
-        insuranceUrl,
-        createdAt: new Date(),
-        profileStatus: 'under-review',
-      });
-
-      // 4. Redirect to confirmation page
-      router.push("/confirmation");
+        const worksheet = XLSX.utils.json_to_sheet([pilotData]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Pilots");
+    
+        // This will trigger a download of the file
+        XLSX.writeFile(workbook, "PilotRegistrations.xlsx");
+    
+        // Redirect to confirmation page
+        router.push("/confirmation");
 
     } catch (error: any) {
-      console.error("Registration failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Registration Failed",
-        description: error.message || "An unexpected error occurred. Please try again.",
-      });
-      setIsSubmitting(false);
+        console.error("Failed to generate Excel file:", error);
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: "Could not generate the registration file. Please try again.",
+        });
+        setIsSubmitting(false);
     }
   };
 
