@@ -106,12 +106,28 @@ export function RegistrationForm() {
   };
 
   const onInvalid = (errors: FieldErrors) => {
-    console.error(errors);
-    toast({
-      variant: "destructive",
-      title: "Incomplete Form",
-      description: "Please fill out all required fields on every step and try again.",
-    });
+    console.error("Form validation failed:", errors);
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length > 0) {
+      const firstErrorField = errorKeys[0] as FieldName<FormData>;
+      const errorStepIndex = steps.findIndex(step => step.fields.includes(firstErrorField));
+      
+      let description = "Please fill out all required fields on every step and try again.";
+      if (errorStepIndex !== -1) {
+        const errorStep = steps[errorStepIndex];
+        description = `Please review Step ${errorStep.id}: ${errorStep.name} for errors.`;
+        if (errorStepIndex !== currentStep) {
+          setCurrentStep(errorStepIndex);
+        }
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Incomplete Form",
+        description: description,
+      });
+    }
   };
   
   const processForm = async (data: FormData) => {
