@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
 
   try {
     const session = await decrypt(sessionCookie);
-    if (!session?.email) {
+    if (!session?.user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
     return NextResponse.next()
