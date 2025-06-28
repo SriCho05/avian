@@ -1,26 +1,50 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { decrypt } from '@/lib/session'
-import { cookies } from 'next/headers'
 
 export async function middleware(request: NextRequest) {
-  const sessionCookie = cookies().get('session')?.value
+  const { pathname } = request.nextUrl
+  const sessionCookie = request.cookies.get('session')?.value
+
+  const isPilotRoute = pathname.startsWith('/dashboard')
+  const isClientRoute = pathname.startsWith('/client/dashboard')
+
+  const pilotLoginUrl = new URL('/login', request.url)
+  const clientLoginUrl = new URL('/client/login', request.url)
 
   if (!sessionCookie) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    if (isPilotRoute) return NextResponse.redirect(pilotLoginUrl)
+    if (isClientRoute) return NextResponse.redirect(clientLoginUrl)
+    return NextResponse.next()
   }
 
   try {
-    const session = await decrypt(sessionCookie);
+    const session = await decrypt(sessionCookie)
     if (!session?.user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+        if (isPilotRoute) return NextResponse.redirect(pilotLoginUrl)
+        if (isClientRoute) return NextResponse.redirect(clientLoginUrl)
+        return NextResponse.next()
     }
+    
+    const { role } = session.user
+
+    if (isPilotRoute && role !== 'pilot') {
+      return NextResponse.redirect(pilotLoginUrl)
+    }
+
+    if (isClientRoute && role !== 'client') {
+      return NextResponse.redirect(clientLoginUrl)
+    }
+
     return NextResponse.next()
   } catch (error) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    console.error('Middleware error:', error);
+    const response = NextResponse.redirect(isPilotRoute ? pilotLoginUrl : clientLoginUrl)
+    response.cookies.set('session', '', { expires: new Date(0) })
+    return response
   }
 }
 
 export const config = {
-  matcher: '/dashboard/:path*',
+  matcher: ['/dashboard/:path*', '/client/dashboard/:path*'],
 }

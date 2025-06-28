@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
 
     const sheets = await getSheetsClient();
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-    const range = 'A:Z'; // Read all data
+    const sheetName = 'Clients';
+    const range = `${sheetName}!A:Z`;
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -46,31 +47,31 @@ export async function POST(req: NextRequest) {
     const passwordIndex = headers.indexOf('password');
 
     if (emailIndex === -1 || passwordIndex === -1) {
-      return NextResponse.json({ message: 'Sheet configuration error' }, { status: 500 });
+      return NextResponse.json({ message: 'Client sheet configuration error' }, { status: 500 });
     }
     
-    const pilotRow = rows.slice(1).find(row => row[emailIndex] === email);
+    const clientRow = rows.slice(1).find(row => row[emailIndex] === email);
 
-    if (!pilotRow) {
+    if (!clientRow) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const hashedPassword = pilotRow[passwordIndex];
+    const hashedPassword = clientRow[passwordIndex];
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
     if (!passwordsMatch) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const pilotData: { [key: string]: any } = { role: 'pilot' };
+    const clientData: { [key: string]: any } = { role: 'client' };
     headers.forEach((header, index) => {
-        if(header !== 'password' && header !== 'confirmPassword') {
-            pilotData[header] = pilotRow[index];
+        if(header !== 'password') {
+            clientData[header] = clientRow[index];
         }
     });
 
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-    const session = await new SignJWT({ user: pilotData, expires })
+    const session = await new SignJWT({ user: clientData, expires })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('1h')
@@ -81,7 +82,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error: any) {
-    console.error('Login error:', error);
+    if (error.message.includes("No sheet with the name 'Clients' exists")) {
+       return NextResponse.json({ message: 'No clients have registered yet. Please register a client account first.' }, { status: 404 });
+    }
+    console.error('Client login error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

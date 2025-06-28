@@ -1,8 +1,15 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlaneTakeoff, ShieldCheck, Camera } from 'lucide-react';
+import { PlaneTakeoff, ShieldCheck, Camera, Building } from 'lucide-react';
 import Image from 'next/image';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 export default function Home() {
   return (
@@ -14,12 +21,35 @@ export default function Home() {
             <span className="font-headline">Avian Pilot Portal</span>
           </Link>
           <nav className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link href="/login">Log In</Link>
-            </Button>
-            <Button asChild style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}>
-              <Link href="/register">Register Now</Link>
-            </Button>
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">Pilot Portal</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                   <Link href="/login">Log In</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/register">Register</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                 <Button asChild style={{ backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))' }}>
+                    <span>Client Portal</span>
+                 </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/client/login">Log In</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/client/register">Register</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
         </div>
       </header>
@@ -31,16 +61,21 @@ export default function Home() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline">
-                    Join the Elite Fleet of Avian Pilots
+                    Your Marketplace for Professional Drone Services
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Your gateway to professional drone piloting opportunities. Register, showcase your skills, and connect with a world of aerial projects.
+                    Whether you're a certified pilot looking for opportunities or a client needing aerial services, you're in the right place.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button size="lg" asChild>
                     <Link href="/register">
                       Become a Pilot Today
+                    </Link>
+                  </Button>
+                   <Button size="lg" variant="secondary" asChild>
+                    <Link href="/client/register">
+                      Hire a Pilot
                     </Link>
                   </Button>
                 </div>
@@ -62,9 +97,9 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Key Features</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Why Join Us?</h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  We provide the tools and platform to elevate your drone piloting career.
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">The Complete Drone Service Platform</h2>
+                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  We provide the tools and platform to elevate your drone piloting career and to find the perfect professional for your project.
                 </p>
               </div>
             </div>
@@ -87,18 +122,18 @@ export default function Home() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Detail your drone fleet, from models and specs to payload capabilities, attracting the right clients.
+                    Pilots detail their drone fleet, from models and specs to payload capabilities, attracting the right clients.
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <PlaneTakeoff className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-lg font-medium">Flexible Scheduling</CardTitle>
+                  <Building className="w-8 h-8 text-primary" />
+                  <CardTitle className="text-lg font-medium">Post Jobs Easily</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Set your availability, service radius, and travel willingness to get matched with suitable missions.
+                    Clients can quickly post job requirements and connect with a network of skilled pilots ready for the mission.
                   </p>
                 </CardContent>
               </Card>

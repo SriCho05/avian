@@ -1,32 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, Plane, Shield, Languages, MapPin, CheckCircle } from "lucide-react";
+import { Plane, Shield, MapPin, CheckCircle } from "lucide-react";
 
 interface User {
     [key: string]: any;
 }
-
-export function LogoutButton() {
-    const router = useRouter();
-
-    const handleLogout = async () => {
-        await fetch("/api/logout", { method: "POST" });
-        router.push("/");
-        router.refresh();
-    };
-
-    return (
-        <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-        </Button>
-    );
-}
-
 
 export function DashboardClient({ user }: { user: User }) {
     const getInitials = (name: string) => {
