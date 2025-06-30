@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { PlaneTakeoff } from "lucide-react";
+import { PlaneTakeoff, Briefcase } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,12 @@ export default function DashboardLayout({
             <span className="font-headline">Avian Pilot Portal</span>
           </Link>
           <nav className="flex items-center gap-2">
+            <Button variant="outline" asChild>
+                <Link href="/dashboard/jobs">
+                    <Briefcase className="mr-2 h-4 w-4" />
+                    Browse Jobs
+                </Link>
+            </Button>
             <LogoutButton />
           </nav>
         </div>

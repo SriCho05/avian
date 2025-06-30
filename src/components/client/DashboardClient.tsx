@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 interface User {
     [key: string]: any;
@@ -32,9 +33,11 @@ export function DashboardClient({ user }: { user: User }) {
                         <p className="text-muted-foreground">{user.companyName || 'Manage your drone service jobs here.'}</p>
                     </div>
                 </div>
-                 <Button size="lg">
-                    <PlusCircle className="mr-2 h-5 w-5" />
-                    Post a New Job
+                 <Button size="lg" asChild>
+                    <Link href="/client/dashboard/post-job">
+                        <PlusCircle className="mr-2 h-5 w-5" />
+                        Post a New Job
+                    </Link>
                 </Button>
             </div>
 
