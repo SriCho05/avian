@@ -26,12 +26,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function Home() {
   const services = [
-    { name: "Real Estate", hint: "modern house aerial", image: "https://placehold.co/600x400.png" },
-    { name: "Inspection", hint: "drone inspection industrial", image: "https://placehold.co/600x400.png" },
-    { name: "Agriculture", hint: "farm aerial view", image: "https://placehold.co/600x400.png" },
-    { name: "Cinematography", hint: "drone filming movie", image: "https://placehold.co/600x400.png" },
-    { name: "Event Coverage", hint: "outdoor festival aerial", image: "https://placehold.co/600x400.png" },
-    { name: "Surveying & Mapping", hint: "topographic map drone", image: "https://placehold.co/600x400.png" },
+    { name: "Real Estate", image: "https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
+    { name: "Inspection", image: "https://images.pexels.com/photos/17528340/pexels-photo-17528340/free-photo-of-drone-flying-over-solar-panels.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
+    { name: "Agriculture", image: "https://images.pexels.com/photos/4175066/pexels-photo-4175066.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
+    { name: "Cinematography", image: "https://images.pexels.com/photos/8996614/pexels-photo-8996614.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
+    { name: "Event Coverage", image: "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
+    { name: "Surveying & Mapping", image: "https://images.pexels.com/photos/5907604/pexels-photo-5907604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" },
   ];
 
   return (
@@ -129,7 +129,7 @@ export default function Home() {
             </div>
             <div className="mx-auto grid max-w-5xl items-stretch gap-8 py-12 lg:grid-cols-3">
               <Card className="overflow-hidden flex flex-col">
-                <Image src="https://placehold.co/600x400.png" alt="Verified Professionals" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="pilot license" />
+                <Image src="https://images.pexels.com/photos/8885073/pexels-photo-8885073.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Verified Professionals" width={600} height={400} className="w-full h-48 object-cover" />
                 <CardHeader>
                   <CardTitle className="text-xl">Verified Professionals</CardTitle>
                 </CardHeader>
@@ -140,7 +140,7 @@ export default function Home() {
                 </CardContent>
               </Card>
               <Card className="overflow-hidden flex flex-col">
-                <Image src="https://placehold.co/600x400.png" alt="Showcase Your Gear" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="drone equipment" />
+                <Image src="https://images.pexels.com/photos/3945659/pexels-photo-3945659.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Showcase Your Gear" width={600} height={400} className="w-full h-48 object-cover" />
                 <CardHeader>
                   <CardTitle className="text-xl">Showcase Your Gear</CardTitle>
                 </CardHeader>
@@ -151,7 +151,7 @@ export default function Home() {
                 </CardContent>
               </Card>
               <Card className="overflow-hidden flex flex-col">
-                <Image src="https://placehold.co/600x400.png" alt="Post Jobs Easily" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="job board" />
+                <Image src="https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Post Jobs Easily" width={600} height={400} className="w-full h-48 object-cover" />
                 <CardHeader>
                   <CardTitle className="text-xl">Post Jobs Easily</CardTitle>
                 </CardHeader>
@@ -237,7 +237,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
               {services.map((service, index) => (
                 <Link key={index} href="#" className="relative block group overflow-hidden rounded-lg shadow-lg h-80">
-                  <Image src={service.image} alt={service.name} fill={true} objectFit="cover" className="transition-transform duration-500 group-hover:scale-105" data-ai-hint={service.hint} />
+                  <Image src={service.image} alt={service.name} fill={true} style={{objectFit: 'cover'}} className="transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="relative h-full flex flex-col justify-end p-6">
                     <h3 className="text-2xl font-bold text-white">{service.name}</h3>
