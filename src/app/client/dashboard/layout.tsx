@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PlaneTakeoff, Briefcase } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function ClientDashboardLayout({
   children,
@@ -22,6 +23,7 @@ export default function ClientDashboardLayout({
                     My Jobs
                 </Link>
             </Button>
+            <ThemeToggle />
             <LogoutButton />
           </nav>
         </div>

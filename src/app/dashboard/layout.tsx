@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PlaneTakeoff, Briefcase } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function DashboardLayout({
   children,
@@ -23,6 +24,7 @@ export default function DashboardLayout({
                     Browse Jobs
                 </Link>
             </Button>
+            <ThemeToggle />
             <LogoutButton />
           </nav>
         </div>
