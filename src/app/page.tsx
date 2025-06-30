@@ -1,23 +1,15 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   PlaneTakeoff,
-  ShieldCheck,
-  Camera,
-  Building,
   UserPlus,
   Search,
   Award,
   FilePlus2,
   Users,
   CheckCircle2,
-  Home as HomeIcon,
-  Leaf,
-  PartyPopper,
-  ClipboardCheck,
-  Map as MapIcon,
-  Film,
   Star,
 } from 'lucide-react';
 import {
@@ -33,6 +25,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 export default function Home() {
+  const services = [
+    { name: "Real Estate", hint: "modern house aerial", image: "https://placehold.co/600x400.png" },
+    { name: "Inspection", hint: "drone inspection industrial", image: "https://placehold.co/600x400.png" },
+    { name: "Agriculture", hint: "farm aerial view", image: "https://placehold.co/600x400.png" },
+    { name: "Cinematography", hint: "drone filming movie", image: "https://placehold.co/600x400.png" },
+    { name: "Event Coverage", hint: "outdoor festival aerial", image: "https://placehold.co/600x400.png" },
+    { name: "Surveying & Mapping", hint: "topographic map drone", image: "https://placehold.co/600x400.png" },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
@@ -126,35 +127,35 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <ShieldCheck className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-lg font-medium">Verified Professionals</CardTitle>
+            <div className="mx-auto grid max-w-5xl items-stretch gap-8 py-12 lg:grid-cols-3">
+              <Card className="overflow-hidden flex flex-col">
+                <Image src="https://placehold.co/600x400.png" alt="Verified Professionals" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="pilot license" />
+                <CardHeader>
+                  <CardTitle className="text-xl">Verified Professionals</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-grow">
                   <p className="text-sm text-muted-foreground">
                     All pilots undergo a verification process, ensuring a high standard of quality and safety for all projects.
                   </p>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Camera className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-lg font-medium">Showcase Your Gear</CardTitle>
+              <Card className="overflow-hidden flex flex-col">
+                <Image src="https://placehold.co/600x400.png" alt="Showcase Your Gear" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="drone equipment" />
+                <CardHeader>
+                  <CardTitle className="text-xl">Showcase Your Gear</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-grow">
                   <p className="text-sm text-muted-foreground">
                     Pilots detail their drone fleet, from models and specs to payload capabilities, attracting the right clients.
                   </p>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Building className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-lg font-medium">Post Jobs Easily</CardTitle>
+              <Card className="overflow-hidden flex flex-col">
+                <Image src="https://placehold.co/600x400.png" alt="Post Jobs Easily" width={600} height={400} className="w-full h-48 object-cover" data-ai-hint="job board" />
+                <CardHeader>
+                  <CardTitle className="text-xl">Post Jobs Easily</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-grow">
                   <p className="text-sm text-muted-foreground">
                     Clients can quickly post job requirements and connect with a network of skilled pilots ready for the mission.
                   </p>
@@ -221,7 +222,7 @@ export default function Home() {
             </div>
           </AnimateOnScroll>
         </section>
-
+        
         <section id="services" className="w-full py-12 md:py-24 lg:py-32">
           <AnimateOnScroll className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -233,39 +234,16 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-12">
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <HomeIcon className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Real Estate</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <ClipboardCheck className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Inspection</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <Leaf className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Agriculture</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <PartyPopper className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Event Coverage</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <MapIcon className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Mapping</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <Film className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Cinematography</h3>
-              </Card>
-              <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <Search className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">Security</h3>
-              </Card>
-               <Card className="text-center p-4 hover:shadow-lg transition-shadow">
-                <Award className="mx-auto w-10 h-10 text-primary mb-2" />
-                <h3 className="font-semibold">And More...</h3>
-              </Card>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+              {services.map((service, index) => (
+                <Link key={index} href="#" className="relative block group overflow-hidden rounded-lg shadow-lg h-80">
+                  <Image src={service.image} alt={service.name} fill={true} objectFit="cover" className="transition-transform duration-500 group-hover:scale-105" data-ai-hint={service.hint} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="relative h-full flex flex-col justify-end p-6">
+                    <h3 className="text-2xl font-bold text-white">{service.name}</h3>
+                  </div>
+                </Link>
+              ))}
             </div>
           </AnimateOnScroll>
         </section>
@@ -282,6 +260,13 @@ export default function Home() {
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
               <Card className="p-6">
                 <CardContent className="p-0">
+                  <div className="flex gap-0.5 mb-2 text-primary">
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                  </div>
                   <p className="italic">"Finding a certified pilot for our real estate shoots used to be a nightmare. Avian Pilot Portal made it incredibly simple and efficient."</p>
                   <div className="flex items-center gap-4 mt-4">
                      <Avatar>
@@ -297,6 +282,13 @@ export default function Home() {
               </Card>
               <Card className="p-6">
                 <CardContent className="p-0">
+                   <div className="flex gap-0.5 mb-2 text-primary">
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                      <Star className="w-5 h-5 fill-current" />
+                  </div>
                   <p className="italic">"As a freelance pilot, this platform has been a game-changer for my career. The quality of job postings is excellent."</p>
                   <div className="flex items-center gap-4 mt-4">
                      <Avatar>
