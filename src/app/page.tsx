@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaneTakeoff, ShieldCheck, Camera, Building } from 'lucide-react';
-import Image from 'next/image';
 import {
   DropdownMenu,
   DropdownMenuContent,
